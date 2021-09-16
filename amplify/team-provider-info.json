@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-question-dev-74459-authRole",
+      "UnauthRoleArn": "arn:aws:iam::285678482385:role/amplify-question-dev-74459-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::285678482385:role/amplify-question-dev-74459-authRole",
+      "Region": "ap-northeast-1",
+      "DeploymentBucketName": "amplify-question-dev-74459-deployment",
+      "UnauthRoleName": "amplify-question-dev-74459-unauthRole",
+      "StackName": "amplify-question-dev-74459",
+      "StackId": "arn:aws:cloudformation:ap-northeast-1:285678482385:stack/amplify-question-dev-74459/00362e20-16c2-11ec-af4a-0a693b06880f",
+      "AmplifyAppId": "dvjefukbl6obu"
+    }
+  }
+}

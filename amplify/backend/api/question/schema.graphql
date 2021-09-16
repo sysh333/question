@@ -1,0 +1,13 @@
+type sourceTable @model 
+  @key(fields: ["title"])
+{
+  title: String!
+  category: String!
+  date: String!
+  url: String!
+}
+type targetTable @model {
+  title: String!
+  category: String!
+  updatedAt: String
+}
