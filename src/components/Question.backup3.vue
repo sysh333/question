@@ -15,7 +15,7 @@
       <v-btn
       class="submit" v-bind:disabled="isPush" v-on:click="createTargetTable()"
       >
-        <span class="mr-2">Submit</span>
+        <span class="mr-2">{{submitState}}</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
     </v-app-bar>
@@ -80,6 +80,7 @@ export default {
       selectionType: 'leaf',
       selection: [],
       isPush : false,
+      submitState : "submit", 
     }
   },
   mounted: function () {
@@ -87,7 +88,6 @@ export default {
   },
   methods: {
     changeFormat: async function () {
-      this.isPush = true;
       let NewServiceUpdateList = await API.graphql(graphqlOperation(
         listSourceTables, {limit: this.limit}
       ))
@@ -130,6 +130,8 @@ export default {
       this.changeFormatResult = temp;
     },
     createTargetTable: async function () {
+      this.isPush = true;
+      this.submitState = "Thank you!";
       const selection = this.selection
       for (  var i = 0;  i < selection.length;  i++  ) {
         try {
