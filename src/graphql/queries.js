@@ -8,6 +8,7 @@ export const getSourceTable = /* GraphQL */ `
       category
       date
       url
+      voteCount
       createdAt
       updatedAt
     }
@@ -33,6 +34,7 @@ export const listSourceTables = /* GraphQL */ `
         category
         date
         url
+        voteCount
         createdAt
         updatedAt
       }

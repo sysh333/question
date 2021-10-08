@@ -9,7 +9,7 @@
 <script>
 // import HelloWorld from './components/HelloWorld';
 // import Question from './components/Question';
-import Question from './components/Question.backup3';
+import Question from './components/Question.backup4';
 
 export default {
   name: 'App',

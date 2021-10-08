@@ -8,6 +8,7 @@ export const onCreateSourceTable = /* GraphQL */ `
       category
       date
       url
+      voteCount
       createdAt
       updatedAt
     }
@@ -20,6 +21,7 @@ export const onUpdateSourceTable = /* GraphQL */ `
       category
       date
       url
+      voteCount
       createdAt
       updatedAt
     }
@@ -32,6 +34,7 @@ export const onDeleteSourceTable = /* GraphQL */ `
       category
       date
       url
+      voteCount
       createdAt
       updatedAt
     }

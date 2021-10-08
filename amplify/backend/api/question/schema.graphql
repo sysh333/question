@@ -5,6 +5,7 @@ type sourceTable @model
   category: String!
   date: String!
   url: String!
+  voteCount: Int!
 }
 type targetTable @model {
   title: String!
