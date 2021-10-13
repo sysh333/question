@@ -7,17 +7,16 @@
       dark
     >
       <div class="d-flex align-center">
-        AWS新機能ご紹介アンケート
+        新機能ご紹介アンケート
       </div>
 
       <v-spacer></v-spacer>
 
-      <v-btn
-        class="submit" v-bind:disabled="isPush" v-on:click="createTargetTable()"
-      >
-        <span class="mr-2">{{submitState}}</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+      <!--<v-btn-->
+      <!--  class="submit" v-bind:disabled="isPush" v-on:click="createTargetTable()">-->
+      <!--  <span class="mr-2">{{submitState}}</span>-->
+      <!--  <v-icon>mdi-open-in-new</v-icon>-->
+      <!--</v-btn>-->
     </v-app-bar>
     
     <v-container>
@@ -34,7 +33,7 @@
         >
           
         <template v-slot:prepend="{ item }">
-          {{item.date}} : <a :href="item.url" target="_blank" >{{item.title}}</a>
+          {{item.date}} : <a :href="item.url" target="_blank" >{{item.title}} </a>
         </template>
           
         </v-treeview>
@@ -44,19 +43,26 @@
         class="pa-6"
         cols="6"
       >
-        <!--<template v-if="!selection.length">-->
-        <!--  No nodes selected.-->
-        <!--</template>-->
-        <!--<template v-else>-->
-          <div
-            v-for="item in NewServiceUpdateList"
-            :key="item.title" 
+        <template>
+          <v-data-table
+            :headers="headers"
+            :items="voteNewServiceUpdateList" 
+            :items-per-page="10"
+            class="elevation-1"
+            mustSort
+            :sort-by="['voteCount']"
+            :sort-desc="[true]"
           >
-            {{ item.voteCount }}
-            {{ item.title }}
-          </div>
-
-        <!--</template>-->
+            <template v-slot:item.voteCount="{ item }">
+              <v-chip
+                :color="getColor(item.voteCount)"
+                dark
+              >
+                {{ item.voteCount }}
+              </v-chip>
+            </template>
+          </v-data-table>
+        </template>
       </v-col>
     </v-row>
     </v-container>
@@ -78,12 +84,22 @@ export default {
     return {
       changeFormatResult: [],
       NewServiceUpdateList: [],
+      voteNewServiceUpdateList:[],
       limit: 2 ** 31 - 1,
       selectionType: 'leaf',
       selection: [],
       isPush : false,
       submitState : "submit", 
       onUpdateEventSubscription: null,
+      headers: [
+          {
+            text: 'みんなの投票',
+            align: 'start',
+            sortable: true,
+            value: 'title',
+          },
+          { text: 'Count', value: 'voteCount' },
+      ],
     }
   },
   mounted: function () {
@@ -102,6 +118,7 @@ export default {
             this.NewServiceUpdateList[i].voteCount = updatedEvent.voteCount
           }
         }
+        this.voteNewServiceUpdateList = this.NewServiceUpdateList.filter(x => x.voteCount > 0 )
       }
       },
     )
@@ -113,11 +130,15 @@ export default {
       if (newVal.length > oldVal.length){
         const addCountItem = newVal.filter(i => oldVal.indexOf(i) == -1)
         console.log(addCountItem[0].title , addCountItem[0].voteCount+1);
-        await API.graphql(graphqlOperation(updateSourceTable, { input: { title: addCountItem[0].title, voteCount: addCountItem[0].voteCount+1 }}));
+        for (let i = 0 ; i < addCountItem.length ; i++){
+          await API.graphql(graphqlOperation(updateSourceTable, { input: { title: addCountItem[i].title, voteCount: addCountItem[i].voteCount+1 }}));
+        }
       } else {
         const delCountItem = oldVal.filter(i => newVal.indexOf(i) == -1)
         console.log(delCountItem[0].title , delCountItem[0].voteCount-1);
-        await API.graphql(graphqlOperation(updateSourceTable, { input: { title: delCountItem[0].title, voteCount: delCountItem[0].voteCount-1 }}));
+        for (let i = 0 ; i < delCountItem.length ; i++){
+          await API.graphql(graphqlOperation(updateSourceTable, { input: { title: delCountItem[i].title, voteCount: delCountItem[i].voteCount-1 }}));
+        }
       }
     }
   },
@@ -126,8 +147,9 @@ export default {
       let NewServiceUpdateList = await API.graphql(graphqlOperation(
         listSourceTables, {limit: this.limit}
       ))
-      this.NewServiceUpdateList = orderBy(NewServiceUpdateList.data.listSourceTables.items,'date','desc')
+      this.NewServiceUpdateList = orderBy(NewServiceUpdateList.data.listSourceTables.items,'category','desc')
       console.log(this.NewServiceUpdateList)
+      this.voteNewServiceUpdateList = this.NewServiceUpdateList.filter(x => x.voteCount > 0 )
 
       let result = [];
       let temp = [];
@@ -175,8 +197,13 @@ export default {
         error
         }
       }
-    }
-
+    },
+    getColor (voteCount) {
+      if (voteCount > 2) return 'red'
+      else if (voteCount > 1) return 'orange'
+      else if (voteCount > 0) return 'green'
+      else return 'grey'
+    },
   }
 }
 </script>
