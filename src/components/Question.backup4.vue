@@ -33,7 +33,7 @@
         >
           
         <template v-slot:prepend="{ item }">
-          {{item.date}} : <a :href="item.url" target="_blank" >{{item.title}} </a>
+          {{item.date}} : {{item.title}} <a v-if="item.url" :href="item.url" target="_blank" >link</a>
         </template>
           
         </v-treeview>
@@ -82,15 +82,20 @@ import { orderBy } from 'lodash'
 export default {
   data:function () {
     return {
+      // changedListForTreeview
       changeFormatResult: [],
+      // newServiceUpdateList
       NewServiceUpdateList: [],
+      // votedNewServiceUpdateList
       voteNewServiceUpdateList:[],
-      limit: 2 ** 31 - 1,
       selectionType: 'leaf',
+      // selectedList
       selection: [],
+      // 確認後削除
       isPush : false,
       submitState : "submit", 
       onUpdateEventSubscription: null,
+      // tableHeaders
       headers: [
           {
             text: 'みんなの投票',
@@ -144,15 +149,19 @@ export default {
   },
   methods: {
     changeFormat: async function () {
+      const limit = 1000
       let NewServiceUpdateList = await API.graphql(graphqlOperation(
-        listSourceTables, {limit: this.limit}
+        listSourceTables, {limit: limit}
       ))
       this.NewServiceUpdateList = orderBy(NewServiceUpdateList.data.listSourceTables.items,'category','desc')
       console.log(this.NewServiceUpdateList)
       this.voteNewServiceUpdateList = this.NewServiceUpdateList.filter(x => x.voteCount > 0 )
 
+      // categories
       let result = [];
+      // result resultListForTreeview
       let temp = [];
+      // const newServiceUpdateList = this.NewServiceUpdateList
       const tests = this.NewServiceUpdateList //this.tests を this.NewServiceUpdateListへ変更した。
       // console.log(tests)
       tests.forEach(function(element){
@@ -174,6 +183,7 @@ export default {
           }
         })
       })
+      // var -> let
       var count = 1 ;
       for (  var i = 0;  i < temp.length;  i++  ) {
         temp[ i ].id = count ;
